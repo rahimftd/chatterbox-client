@@ -11,22 +11,27 @@
     <script src="bower_components/underscore/underscore-min.js"></script>
     <!-- your scripts -->
     <script src="env/config.js"></script>
-    <script src="scripts/app.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
       <div>
-        <ul id="roomSelect">
-        </ul>
+        <select id="roomSelect">
+          <option value="all">All</option>
+          <option value="lobby">Lobby</option>
+          <option value="playground">playground</option>
+        </select>
+        <button class="refresh-messages">Refresh Messages</button>
       </div>
     </div>
-    <div id="chats"></div>
-    <div id="message">
-      <input id="message-input" type="text" value="Enter message here...">
+    <div id="chats">
     </div>
-    <div id="send">
-      <input class="submit" type="submit" value="Submit">
+    <div>
+      <form class="message-area">
+        <input id="message-input" type="text" value="Enter message here...">
+        <input class="submit" type="submit" value="submit">
+      </form>
     </div>
+    <script src="scripts/app.js"></script>
   </body>
 </html>
