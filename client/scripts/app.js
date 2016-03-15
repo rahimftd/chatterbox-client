@@ -1,6 +1,7 @@
 var app = {
   server: 'https://api.parse.com/1/classes/messages',
-  maxMessageNumber: 10
+  maxMessageNumber: 10,
+  messageObject: {}
 };
 
 app.init = function() {
@@ -35,8 +36,9 @@ app.fetch = function() {
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
-      app.displayMessages(data);
-      app.getRooms(data);
+      app.messageObject = data;
+      app.displayMessages(data.results);
+      app.getRooms(data.results);
       return true;
     },
     error: function (data) {
@@ -56,10 +58,13 @@ app.addMessage = function(message) {
   var node = '<div class="display-message panel-info panel' + roomname + '"><div class="username panel-heading"> <h4 class="panel-title">@' + username + '</h4></div><div class="message-text panel-body"><p>' + text + '</p></div></div>';
   $('#chats').append(node);
 };
+
 app.addRoom = function(roomName) {
-  var node = '<option value="' + roomName + '">' + roomName + '</option>';
+  var escapedRoom = app.escapeHTML(roomName);
+  var node = '<option value="' + escapedRoom + '">' + escapedRoom + '</option>';
   $('#roomSelect').append(node);
 };
+
 app.addFriend = function(friend) {
   return true;
 };
@@ -73,10 +78,14 @@ app.handleSubmit = function(event) {
   app.send(message);
 };
 app.displayMessages = function(data) {
-  var messages = data.results;
+  var messages = data;
   app.clearMessages();
-  for (var i = app.maxMessageNumber - 1; i >= 0; i--) {
-    app.addMessage(messages[i]);
+  if (messages === undefined) {
+    $('#chats').text('<h4>No messages in this room</h4>');
+  } else {
+    for (var i = Math.min(app.maxMessageNumber - 1, messages.length - 1); i >= 0; i--) {
+      app.addMessage(messages[i]);
+    }
   }
 };
 app.createMessageObject = function(text, room, username) {
@@ -116,7 +125,7 @@ app.getUrlParameter = function (sParam) {
   }
 };
 app.getRooms = function(data) {
-  var messages = data.results;
+  var messages = data;
   var rooms = [];
   for (var i = 0; i < messages.length; i++) {
     var room = messages[i].roomname || 'Lobby';
@@ -130,15 +139,19 @@ app.getRooms = function(data) {
   }
   $('#roomSelect').append('<option value="Add New Room">Add New Room</option>');
 };
+
 app.filterByRoom = function(roomName) {
   var room = $('#roomSelect').val();
+  var filteredMessageObject = [];
   if (room === 'Add New Room') {
     $('#new-room').toggle();
   } else {
-    var $displayRooms = $('.' + room);
-    console.log($displayRooms);
-    $('#chats .display-message').hide();
-    $displayRooms.show();
+    for (var i = 0; i < app.messageObject.results.length; i++) {
+      if (app.messageObject.results[i]['roomname'] === room) {
+        filteredMessageObject.push(app.messageObject.results[i]);
+      }
+    }
+    app.displayMessages(filteredMessageObject);
   }
 };
 
