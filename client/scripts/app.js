@@ -52,7 +52,7 @@ app.addMessage = function(message) {
   var text = app.escapeHTML(message.text);
   var username = app.escapeHTML(message.username);
   var roomname = app.escapeHTML(message.roomname || 'Lobby');
-  var node = '<div class="display-message ' + roomname + '"><div class="username"> <h4>Username: ' + username + '</h4></div><div class="message-text"><p>' + text + '</p></div></div>';
+  var node = '<div class="display-message panel-info panel' + roomname + '"><div class="username panel-heading"> <h4 class="panel-title">@' + username + '</h4></div><div class="message-text panel-body"><p>' + text + '</p></div></div>';
   $('#chats').append(node);
 };
 app.addRoom = function(roomName) {
