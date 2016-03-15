@@ -1,10 +1,13 @@
 var app = {
-  server: 'https://api.parse.com/1/classes/messages'
+  server: 'https://api.parse.com/1/classes/messages',
+  maxMessageNumber: 10
 };
 
 app.init = function() {
   $('#main').find('.username').on('click', this.addFriend);
   $('.message-area').on('submit', this.handleSubmit);
+  $('.refresh-messages').on('click', this.fetch);
+  this.fetch();
 };
 app.send = function(message) {
   $.ajax({
@@ -30,11 +33,13 @@ app.fetch = function() {
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
-      console.log(data);
+      app.displayMessages(data);
+      return true;
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to send message', data);
+      console.error('chatterbox: Failed to fetch messages', data);
+      return false;
     }
   });
 };
@@ -42,7 +47,10 @@ app.clearMessages = function() {
   $('#chats').empty();
 };
 app.addMessage = function(message) {
-  var node = '<div class="display-message">' + '<div class="username">' + message.username + '</div>' + message.text + message.roomname + '</div>';
+  var text = encodeURIComponent(message.text);
+  var username = message.username;
+  var roomname = message.roomname;
+  var node = '<div class="display-message">' + '<div class="username"> <h4>Username: ' + username + '</h4></div> <div class="message-text"><p>' + text + '</p></div>' + roomname + '</div>';
   $('#chats').append(node);
 };
 app.addRoom = function(roomName) {
@@ -60,6 +68,13 @@ app.handleSubmit = function(event) {
   var username = app.getUrlParameter('username');
   var message = app.createMessageObject(text, room, username);
   app.send(message);
+};
+app.displayMessages = function(data) {
+  var messages = data.results;
+  for (var i = 0; i < app.maxMessageNumber; i++) {
+    app.addMessage(messages[i]);
+  }
+  console.log(messages);
 };
 app.createMessageObject = function(text, room, username) {
   var obj = {
