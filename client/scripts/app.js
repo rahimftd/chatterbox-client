@@ -1,7 +1,8 @@
 var app = {
   server: 'https://api.parse.com/1/classes/messages',
   maxMessageNumber: 10,
-  messageObject: {}
+  messageObject: {},
+  currentRoom: 'Lobby'
 };
 
 app.init = function() {
@@ -14,7 +15,7 @@ app.init = function() {
 app.send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: this.server,
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -32,12 +33,12 @@ app.send = function(message) {
 app.fetch = function() {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: this.server,
+    url: app.server,
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
       app.messageObject = data;
-      app.displayMessages(data.results);
+      app.filterByRoom(app.currentRoom);
       app.getRooms(data.results);
       return true;
     },
@@ -77,6 +78,7 @@ app.handleSubmit = function(event) {
   var message = app.createMessageObject(text, room, username);
   app.send(message);
 };
+
 app.displayMessages = function(data) {
   var messages = data;
   app.clearMessages();
@@ -138,13 +140,17 @@ app.getRooms = function(data) {
     app.addRoom(rooms[i]);
   }
   $('#roomSelect').append('<option value="Add New Room">Add New Room</option>');
+  $('#roomSelect').val(app.currentRoom);
 };
 
 app.filterByRoom = function(roomName) {
-  var room = $('#roomSelect').val();
+  var room = $('#roomSelect').val() || 'Lobby';
+  app.currentRoom = room;
   var filteredMessageObject = [];
   if (room === 'Add New Room') {
     $('#new-room').toggle();
+  } else if (room === 'Lobby') {
+    app.displayMessages(app.messageObject.results);
   } else {
     for (var i = 0; i < app.messageObject.results.length; i++) {
       if (app.messageObject.results[i]['roomname'] === room) {
