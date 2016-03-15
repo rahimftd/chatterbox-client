@@ -5,7 +5,7 @@ body {
     font-family: arial, sans-serif;
 }
 
-#main, #chats {
+#main, #chats, .message-area {
     width: 500px;
     margin: auto;
     text-align: left;
@@ -85,4 +85,8 @@ form input[type=text] {
 
 .message-text {
     word-wrap: break-word;
+}
+
+.display-message:hover {
+    background-color: #E6E6FA;
 }
