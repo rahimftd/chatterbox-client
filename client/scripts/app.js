@@ -19,7 +19,8 @@ app.send = function(message) {
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent');
-      $('#message-input').val('Enter message here...');
+      $('#message-input').attr('placeholder', 'Enter message here...').val('');
+      app.fetch();
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -66,11 +67,10 @@ app.addFriend = function(friend) {
 app.handleSubmit = function(event) {
   event.preventDefault();
   var text = $('#message-input').val();
-  var room = $('#roomSelect').val();
+  var room = $('#new-room').val() === '' ? $('#roomSelect').val() : $('#new-room').val();
   var username = app.getUrlParameter('username');
   var message = app.createMessageObject(text, room, username);
   app.send(message);
-  app.fetch();
 };
 app.displayMessages = function(data) {
   var messages = data.results;
@@ -128,13 +128,18 @@ app.getRooms = function(data) {
   for (var i = 0; i < rooms.length; i++) {
     app.addRoom(rooms[i]);
   }
+  $('#roomSelect').append('<option value="Add New Room">Add New Room</option>');
 };
 app.filterByRoom = function(roomName) {
   var room = $('#roomSelect').val();
-  var $displayRooms = $('.' + room);
-  console.log($displayRooms);
-  $('#chats .display-message').hide();
-  $displayRooms.show();
+  if (room === 'Add New Room') {
+    $('#new-room').toggle();
+  } else {
+    var $displayRooms = $('.' + room);
+    console.log($displayRooms);
+    $('#chats .display-message').hide();
+    $displayRooms.show();
+  }
 };
 
 app.init();

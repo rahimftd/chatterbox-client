@@ -16,18 +16,21 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <div>
-        <select id="roomSelect" class="form-control">
-        </select>
-        <button class="refresh-messages btn btn-primary">Refresh Messages</button>
-      </div>
     </div>
     <div id="chats">
     </div>
     <div>
-      <form class="message-area">
-        <input id="message-input" type="text" value="Enter message here...">
-        <input class="submit btn btn-primary" type="submit" value="submit">
+      <button class="refresh-messages btn btn-primary">Refresh Messages</button>  
+    </div>
+    <div class="message-area">
+      <form>
+        <div class="input-group">
+          <textarea type="text" id="message-input" class="form-control" placeholder="Enter message here..." aria-describedby="basic-addon2"></textarea>
+        </div>
+      <select id="roomSelect" class="form-control">
+      <input id="new-room" type="text" placeholder="Enter new room name" style="display: none">
+      </select>
+        <input type="submit" class="submit btn-primary btn" value="Submit">
       </form>
     </div>
     <script src="scripts/app.js"></script>
