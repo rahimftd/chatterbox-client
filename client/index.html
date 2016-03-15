@@ -16,36 +16,43 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-8">
+        <div class="col-md-6 col-md-offset-3 chat-container">
           <div id="main" class="row">
-            <h1>chatterbox</h1>
+            <h1>ClownChat</h1>
           </div>
           <div class="row">
-            <h3 class="room-name">Lobby</h3>
-            <div id="chats">
+            <div class="col-md-12">
+              <h3 class="room-name">Lobby</h3>
+              <div id="chats">
+              </div>
             </div>
           </div>
           <div class="row">
-            <div>
+            <div class="col-md-12">
               <button class="refresh-messages btn btn-primary">Refresh Messages</button>
               <button class="show-friends btn btn-primary">Show Friends</button>
             </div>
+          </div>
+          <div class="row">
             <div class="message-area">
               <form>
-                <div class="input-group">
+                <div class="form-group">
                   <textarea type="text" id="message-input" class="form-control" placeholder="Enter message here..." aria-describedby="basic-addon2"></textarea>
                 </div>
-              <select id="roomSelect" class="form-control">
-              <input id="new-room" type="text" placeholder="Enter new room name" style="display: none">
-              </select>
-                <input type="submit" class="submit btn-primary btn" value="Submit">
+                <div class="form-horizontal">
+                  <div class="form-group col-md-12">
+                    <select id="roomSelect" class="form-control"></select>
+                  </div>
+                </div>
+                <div class="form-group new-room-container">
+                  <input id="new-room" type="text" placeholder="Enter new room name" style="display: none">
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="submit btn-primary btn" value="Submit">
+                </div>
               </form>
             </div>
           </div>
-        </div>
-        <div class="col-md-2">
         </div>
       </div>
     </div>

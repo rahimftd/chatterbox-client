@@ -91,7 +91,7 @@ app.handleSubmit = function(event) {
   var message = app.createMessageObject(text, room, username);
   app.currentRoom = room;
   app.send(message);
-  $('#new-room').hide().val('').attr('placeholder', 'Enter new room name...');
+  $('#new-room').slideUp(500).val('').attr('placeholder', 'Enter new room name...');
 };
 
 app.displayMessages = function(data) {
@@ -165,7 +165,7 @@ app.filterByRoom = function() {
   var room = app.currentRoom;
   var filteredMessageObject = [];
   if (room === 'Add New Room') {
-    $('#new-room').toggle();
+    $('#new-room').slideDown(500);
   } else if (room === 'Lobby') {
     app.displayMessages(app.messageObject.results);
   } else {
@@ -191,4 +191,3 @@ app.filterByFriends = function() {
 };
 
 app.init();
-setInterval(app.fetch, 5000);
