@@ -7,6 +7,7 @@ app.init = function() {
   $('#main').find('.username').on('click', this.addFriend);
   $('.message-area').on('submit', this.handleSubmit);
   $('.refresh-messages').on('click', this.fetch);
+  $('#roomSelect').change(this.filterByRoom);
   this.fetch();
 };
 app.send = function(message) {
@@ -34,6 +35,7 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function (data) {
       app.displayMessages(data);
+      app.getRooms(data);
       return true;
     },
     error: function (data) {
@@ -47,10 +49,10 @@ app.clearMessages = function() {
   $('#chats').empty();
 };
 app.addMessage = function(message) {
-  var text = encodeURIComponent(message.text);
-  var username = message.username;
-  var roomname = message.roomname;
-  var node = '<div class="display-message">' + '<div class="username"> <h4>Username: ' + username + '</h4></div> <div class="message-text"><p>' + text + '</p></div>' + roomname + '</div>';
+  var text = app.escapeHTML(message.text);
+  var username = app.escapeHTML(message.username);
+  var roomname = app.escapeHTML(message.roomname || 'Lobby');
+  var node = '<div class="display-message ' + roomname + '"><div class="username"> <h4>Username: ' + username + '</h4></div><div class="message-text"><p>' + text + '</p></div></div>';
   $('#chats').append(node);
 };
 app.addRoom = function(roomName) {
@@ -68,13 +70,14 @@ app.handleSubmit = function(event) {
   var username = app.getUrlParameter('username');
   var message = app.createMessageObject(text, room, username);
   app.send(message);
+  app.fetch();
 };
 app.displayMessages = function(data) {
   var messages = data.results;
-  for (var i = 0; i < app.maxMessageNumber; i++) {
+  app.clearMessages();
+  for (var i = app.maxMessageNumber - 1; i >= 0; i--) {
     app.addMessage(messages[i]);
   }
-  console.log(messages);
 };
 app.createMessageObject = function(text, room, username) {
   var obj = {
@@ -83,6 +86,20 @@ app.createMessageObject = function(text, room, username) {
     roomname: room
   };
   return obj;
+};
+
+app.escapeHTML = function(string) {
+  var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&#39;',
+    '/': '&#x2F;'
+  };
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
 };
 
 app.getUrlParameter = function (sParam) {
@@ -97,6 +114,27 @@ app.getUrlParameter = function (sParam) {
       return sParameterName[1] === undefined ? true : sParameterName[1];
     }
   }
+};
+app.getRooms = function(data) {
+  var messages = data.results;
+  var rooms = [];
+  for (var i = 0; i < messages.length; i++) {
+    var room = messages[i].roomname || 'Lobby';
+    if (rooms.indexOf(room) === -1) {
+      rooms.push(room);
+    }
+  }
+  $('#roomSelect').empty();
+  for (var i = 0; i < rooms.length; i++) {
+    app.addRoom(rooms[i]);
+  }
+};
+app.filterByRoom = function(roomName) {
+  var room = $('#roomSelect').val();
+  var $displayRooms = $('.' + room);
+  console.log($displayRooms);
+  $('#chats .display-message').hide();
+  $displayRooms.show();
 };
 
 app.init();
