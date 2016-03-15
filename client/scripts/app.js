@@ -10,7 +10,11 @@ app.init = function() {
   // $('#main').find('.username').on('click', this.addFriend);
   $('.message-area').on('submit', this.handleSubmit);
   $('.refresh-messages').on('click', this.fetch);
-  $('#roomSelect').change(this.filterByRoom);
+  $('.show-friends').click(this.filterByFriends);
+  $('#roomSelect').change(function() {
+    app.currentRoom = $(this).val();
+    app.filterByRoom();
+  });
   this.fetch();
 };
 app.send = function(message) {
@@ -39,11 +43,8 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function (data) {
       app.messageObject = data;
-      app.filterByRoom(app.currentRoom);
+      app.filterByRoom();
       app.getRooms(data.results);
-      $('.username').on('click', function(event) {
-        app.addFriend($(this).text().slice(1));
-      });
       return true;
     },
     error: function (data) {
@@ -85,10 +86,12 @@ app.addFriend = function(friend) {
 app.handleSubmit = function(event) {
   event.preventDefault();
   var text = $('#message-input').val();
-  var room = $('#new-room').val() === '' ? $('#roomSelect').val() : $('#new-room').val();
+  var room = $('#new-room').val() || $('#roomSelect').val();
   var username = app.getUrlParameter('username');
   var message = app.createMessageObject(text, room, username);
+  app.currentRoom = room;
   app.send(message);
+  $('#new-room').hide().val('').attr('placeholder', 'Enter new room name...');
 };
 
 app.displayMessages = function(data) {
@@ -101,6 +104,9 @@ app.displayMessages = function(data) {
       app.addMessage(messages[i]);
     }
   }
+  $('.username').on('click', function(event) {
+    app.addFriend($(this).text().slice(1));
+  });
 };
 app.createMessageObject = function(text, room, username) {
   var obj = {
@@ -155,9 +161,8 @@ app.getRooms = function(data) {
   $('#roomSelect').val(app.currentRoom);
 };
 
-app.filterByRoom = function(roomName) {
-  var room = $('#roomSelect').val() || 'Lobby';
-  app.currentRoom = room;
+app.filterByRoom = function() {
+  var room = app.currentRoom;
   var filteredMessageObject = [];
   if (room === 'Add New Room') {
     $('#new-room').toggle();
@@ -169,8 +174,20 @@ app.filterByRoom = function(roomName) {
         filteredMessageObject.push(app.messageObject.results[i]);
       }
     }
+    $('.room-name').text(app.currentRoom);
     app.displayMessages(filteredMessageObject);
   }
+};
+
+app.filterByFriends = function() {
+  var filteredMessageObject = [];
+  for (var i = 0; i < app.messageObject.results.length; i++) {
+    if (app.friends.indexOf(app.messageObject.results[i]['username']) !== -1) {
+      filteredMessageObject.push(app.messageObject.results[i]);
+    }
+  }
+  $('.room-name').text('Friends');
+  app.displayMessages(filteredMessageObject);
 };
 
 app.init();
