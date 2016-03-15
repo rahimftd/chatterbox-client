@@ -14,26 +14,40 @@
     <script src="env/config.js"></script>
   </head>
   <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-    </div>
-    <h3 class="room-name">Lobby</h3>
-    <div id="chats">
-    </div>
-    <div>
-      <button class="refresh-messages btn btn-primary">Refresh Messages</button>
-      <button class="show-friends btn btn-primary">Show Friends</button>  
-    </div>
-    <div class="message-area">
-      <form>
-        <div class="input-group">
-          <textarea type="text" id="message-input" class="form-control" placeholder="Enter message here..." aria-describedby="basic-addon2"></textarea>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
         </div>
-      <select id="roomSelect" class="form-control">
-      <input id="new-room" type="text" placeholder="Enter new room name" style="display: none">
-      </select>
-        <input type="submit" class="submit btn-primary btn" value="Submit">
-      </form>
+        <div class="col-md-8">
+          <div id="main" class="row">
+            <h1>chatterbox</h1>
+          </div>
+          <div class="row">
+            <h3 class="room-name">Lobby</h3>
+            <div id="chats">
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <button class="refresh-messages btn btn-primary">Refresh Messages</button>
+              <button class="show-friends btn btn-primary">Show Friends</button>
+            </div>
+            <div class="message-area">
+              <form>
+                <div class="input-group">
+                  <textarea type="text" id="message-input" class="form-control" placeholder="Enter message here..." aria-describedby="basic-addon2"></textarea>
+                </div>
+              <select id="roomSelect" class="form-control">
+              <input id="new-room" type="text" placeholder="Enter new room name" style="display: none">
+              </select>
+                <input type="submit" class="submit btn-primary btn" value="Submit">
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+        </div>
+      </div>
     </div>
     <script src="scripts/app.js"></script>
   </body>
