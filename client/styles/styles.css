@@ -90,3 +90,8 @@ form input[type=text] {
 .display-message:hover {
     background-color: #E6E6FA;
 }
+
+.username:hover {
+    font-weight: bold;
+    cursor: pointer;
+}

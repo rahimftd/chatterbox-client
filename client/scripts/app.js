@@ -2,11 +2,12 @@ var app = {
   server: 'https://api.parse.com/1/classes/messages',
   maxMessageNumber: 10,
   messageObject: {},
-  currentRoom: 'Lobby'
+  currentRoom: 'Lobby',
+  friends: []
 };
 
 app.init = function() {
-  $('#main').find('.username').on('click', this.addFriend);
+  // $('#main').find('.username').on('click', this.addFriend);
   $('.message-area').on('submit', this.handleSubmit);
   $('.refresh-messages').on('click', this.fetch);
   $('#roomSelect').change(this.filterByRoom);
@@ -40,6 +41,9 @@ app.fetch = function() {
       app.messageObject = data;
       app.filterByRoom(app.currentRoom);
       app.getRooms(data.results);
+      $('.username').on('click', function(event) {
+        app.addFriend($(this).text().slice(1));
+      });
       return true;
     },
     error: function (data) {
@@ -56,7 +60,11 @@ app.addMessage = function(message) {
   var text = app.escapeHTML(message.text);
   var username = app.escapeHTML(message.username);
   var roomname = app.escapeHTML(message.roomname || 'Lobby');
-  var node = '<div class="display-message panel-info panel' + roomname + '"><div class="username panel-heading"> <h4 class="panel-title">@' + username + '</h4></div><div class="message-text panel-body"><p>' + text + '</p></div></div>';
+  if (app.friends.indexOf(username) !== -1) {
+    var node = '<div class="display-message panel-primary panel' + roomname + '"><div class="panel-heading"> <h4 class="username panel-title">@' + username + '</h4></div><div class="message-text panel-body"><p>' + text + '</p></div></div>';
+  } else {
+    var node = '<div class="display-message panel-info panel' + roomname + '"><div class="panel-heading"> <h4 class="username panel-title">@' + username + '</h4></div><div class="message-text panel-body"><p>' + text + '</p></div></div>';
+  }
   $('#chats').append(node);
 };
 
@@ -67,6 +75,10 @@ app.addRoom = function(roomName) {
 };
 
 app.addFriend = function(friend) {
+  if (app.friends.indexOf(friend) === -1) {
+    app.friends.push(friend);
+  }
+  app.fetch();
   return true;
 };
 // Runs whenever the click handler is clicked
