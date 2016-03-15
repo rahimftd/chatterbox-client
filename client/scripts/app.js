@@ -191,3 +191,4 @@ app.filterByFriends = function() {
 };
 
 app.init();
+setInterval(app.fetch, 5000);
