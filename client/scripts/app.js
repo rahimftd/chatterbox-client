@@ -35,16 +35,24 @@ app.send = function(message) {
     }
   });
 };
-app.fetch = function() {
+app.fetch = function(targetRoom) {
+  if (targetRoom) {
+    targetRoom = encodeURIComponent(targetRoom);
+    var query = '?where%3D%7B%22roomname%22%3A%22' + targetRoom + '%22%7D';
+  } else {
+    var query = '';
+  }
+  
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: app.server,
+    url: app.server + query,
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
       app.messageObject = data;
       app.filterByRoom();
       app.getRooms(data.results);
+      console.log(data);
       return true;
     },
     error: function (data) {
