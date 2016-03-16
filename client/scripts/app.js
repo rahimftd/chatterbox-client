@@ -7,16 +7,20 @@ var app = {
 };
 
 app.init = function() {
-  // $('#main').find('.username').on('click', this.addFriend);
   $('.message-area').on('submit', this.handleSubmit);
-  $('.refresh-messages').on('click', this.fetch);
-  $('.show-friends').click(this.filterByFriends);
+  $('.refresh-messages').on('click', function(e) {
+    app.fetch();
+  });
+  $('.show-friends').click(function() {
+    app.fetch('', true);
+  });
   $('#roomSelect').change(function() {
     app.currentRoom = $(this).val();
     app.filterByRoom();
   });
   this.fetch();
 };
+
 app.send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -35,10 +39,11 @@ app.send = function(message) {
     }
   });
 };
-app.fetch = function(targetRoom) {
-  if (targetRoom) {
-    targetRoom = encodeURIComponent(targetRoom);
-    var query = '?where%3D%7B%22roomname%22%3A%22' + targetRoom + '%22%7D';
+
+app.fetch = function(target, isFriendFilter) {
+  if (target) {
+    target = encodeURIComponent(target);
+    var query = '?where%3D%7B%22roomname%22%3A%22' + target + '%22%7D';
   } else {
     var query = '';
   }
@@ -49,10 +54,12 @@ app.fetch = function(targetRoom) {
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
-      app.messageObject = data;
-      app.filterByRoom();
+      app.displayMessages(data.results);
       app.getRooms(data.results);
-      console.log(data);
+      if (isFriendFilter) {
+        app.filterByFriends(data.results);
+      }
+
       return true;
     },
     error: function (data) {
@@ -177,28 +184,24 @@ app.filterByRoom = function() {
   if (room === 'Add New Room') {
     $('#new-room').slideDown(500);
   } else if (room === 'Lobby') {
-    app.displayMessages(app.messageObject.results);
+    app.fetch();
     $('.room-name').text(app.currentRoom);
   } else {
-    for (var i = 0; i < app.messageObject.results.length; i++) {
-      if (app.messageObject.results[i]['roomname'] === room) {
-        filteredMessageObject.push(app.messageObject.results[i]);
-      }
-    }
+    app.fetch(room);
     $('.room-name').text(app.currentRoom);
-    app.displayMessages(filteredMessageObject);
   }
 };
 
-app.filterByFriends = function() {
+app.filterByFriends = function(data) {
   var filteredMessageObject = [];
-  for (var i = 0; i < app.messageObject.results.length; i++) {
-    if (app.friends.indexOf(app.messageObject.results[i]['username']) !== -1) {
-      filteredMessageObject.push(app.messageObject.results[i]);
+  for (var i = 0; i < data.length; i++) {
+    if (app.friends.indexOf(data[i]['username']) !== -1) {
+      filteredMessageObject.push(data[i]);
     }
   }
   $('.room-name').text('Friends');
   app.displayMessages(filteredMessageObject);
+  
 };
 
 app.init();
