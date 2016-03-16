@@ -168,6 +168,7 @@ app.filterByRoom = function() {
     $('#new-room').slideDown(500);
   } else if (room === 'Lobby') {
     app.displayMessages(app.messageObject.results);
+    $('.room-name').text(app.currentRoom);
   } else {
     for (var i = 0; i < app.messageObject.results.length; i++) {
       if (app.messageObject.results[i]['roomname'] === room) {

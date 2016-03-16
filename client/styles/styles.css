@@ -63,7 +63,7 @@ form {
 
 form input[type=text] {
     margin-right: 10px;
-    width: 70%;
+    /*width: 70%;*/
     font-size: 12px;
     padding: 5px;
 }
@@ -114,4 +114,8 @@ form input[type=text] {
 .room-name {
     background-color: white;
     border-radius: 10px;
+}
+
+.btn {
+    min-width: 150px;
 }
