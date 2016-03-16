@@ -42,7 +42,7 @@ app.fetch = function(targetRoom) {
   } else {
     var query = '';
   }
-  
+
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: app.server + query,
@@ -62,6 +62,7 @@ app.fetch = function(targetRoom) {
     }
   });
 };
+
 app.clearMessages = function() {
   $('#chats').empty();
 };
@@ -152,6 +153,7 @@ app.getUrlParameter = function (sParam) {
     }
   }
 };
+
 app.getRooms = function(data) {
   var messages = data;
   var rooms = [];
